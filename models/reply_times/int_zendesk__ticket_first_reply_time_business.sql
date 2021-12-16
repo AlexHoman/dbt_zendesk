@@ -79,8 +79,16 @@ with ticket_reply_times as (
       weekly_periods.schedule_id,
       ticket_week_start_time,
       ticket_week_end_time,
-      schedule.start_time_utc as schedule_start_time,
-      schedule.end_time_utc as schedule_end_time,
+      case when week_number >= 13 
+      and week_number <= 42 
+      then schedule.start_time_utc 
+      else schedule.start_time_utc+60
+      end as schedule_start_time,
+      case when week_number >= 13 
+      and week_number <= 42 
+      then schedule.end_time_utc 
+      else schedule.end_time_utc+60
+      end as schedule_end_time,
       least(ticket_week_end_time, schedule.end_time_utc) - greatest(ticket_week_start_time, schedule.start_time_utc) as scheduled_minutes
   from weekly_periods
   join schedule on ticket_week_start_time <= schedule.end_time_utc 
